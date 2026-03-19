@@ -7,7 +7,7 @@ import comfy.ops
 from typing_extensions import override
 from comfy_api.latest import ComfyExtension, io
 
-# code for model from: https://github.com/TencentARC/PhotoMaker/blob/main/photomaker/model.py under Apache License Version 2.0
+
 VISION_CONFIG_DICT = {
     "hidden_size": 1024,
     "image_size": 224,

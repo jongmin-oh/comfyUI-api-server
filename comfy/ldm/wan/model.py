@@ -1,5 +1,3 @@
-# original version: https://github.com/Wan-Video/Wan2.1/blob/main/wan/modules/model.py
-# Copyright 2024-2025 The Alibaba Wan Team Authors. All rights reserved.
 import math
 
 import torch

@@ -1,4 +1,3 @@
-# Code based on https://github.com/WikiChao/FreSca (MIT License)
 import torch
 import torch.fft as fft
 from typing_extensions import override

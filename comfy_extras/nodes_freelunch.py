@@ -1,5 +1,3 @@
-#code originally taken from: https://github.com/ChenyangSi/FreeU (under MIT License)
-
 import torch
 import logging
 from typing_extensions import override

@@ -2,7 +2,6 @@ import comfy.options
 comfy.options.enable_args_parsing()
 
 import os
-import importlib.util
 import shutil
 import folder_paths
 import time
@@ -83,45 +82,8 @@ def apply_custom_paths():
         folder_paths.set_user_directory(os.path.abspath(args.user_directory))
 
 
-def execute_prestartup_script():
-    if args.disable_all_custom_nodes and len(args.whitelist_custom_nodes) == 0:
-        return
-
-    def execute_script(script_path):
-        module_name = os.path.splitext(script_path)[0]
-        try:
-            spec = importlib.util.spec_from_file_location(module_name, script_path)
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
-            return True
-        except Exception as e:
-            logging.error(f"Failed to execute startup-script: {script_path} / {e}")
-        return False
-
-    for custom_node_path in folder_paths.get_folder_paths("custom_nodes"):
-        times = []
-        for possible_module in os.listdir(custom_node_path):
-            module_path = os.path.join(custom_node_path, possible_module)
-            if os.path.isfile(module_path) or module_path.endswith(".disabled") or possible_module == "__pycache__":
-                continue
-            script_path = os.path.join(module_path, "prestartup_script.py")
-            if os.path.exists(script_path):
-                if args.disable_all_custom_nodes and possible_module not in args.whitelist_custom_nodes:
-                    continue
-                t = time.perf_counter()
-                ok = execute_script(script_path)
-                times.append((time.perf_counter() - t, module_path, ok))
-        if times:
-            logging.info("\nPrestartup times for custom nodes:")
-            for n in sorted(times):
-                logging.info("{:6.1f} seconds{}: {}".format(n[0], "" if n[2] else " (FAILED)", n[1]))
-
-
 apply_custom_paths()
-execute_prestartup_script()
 
-
-# ---------------------------------------------------------------------------
 import asyncio
 import threading
 import gc

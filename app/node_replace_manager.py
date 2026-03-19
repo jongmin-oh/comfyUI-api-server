@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from aiohttp import web
-
 from typing import TYPE_CHECKING, TypedDict
 if TYPE_CHECKING:
     from comfy_api.latest._io_public import NodeReplace
@@ -101,7 +99,3 @@ class NodeReplaceManager:
             for k, v_list in self._replacements.items()
         }
 
-    def add_routes(self, routes):
-        @routes.get("/node_replacements")
-        async def get_node_replacements(request):
-            return web.json_response(self.as_dict())

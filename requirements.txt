@@ -22,5 +22,6 @@ simpleeval>=1.0.0
 kornia>=0.7.1
 spandrel
 pydantic~=2.0
+pydantic-settings~=2.0
 fastapi
 uvicorn[standard]

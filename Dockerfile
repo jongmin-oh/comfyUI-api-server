@@ -21,12 +21,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 # PyTorch with CUDA 12.4 — 별도 레이어로 분리해 캐싱 효율 극대화
-RUN uv pip install torch torchvision torchaudio \
+RUN uv pip install torch==2.6.0+cu124 torchvision==0.21.0+cu124 torchaudio==2.6.0+cu124 \
         --index-url https://download.pytorch.org/whl/cu124
 
 # 나머지 의존성 설치 (torch 계열은 위에서 이미 설치)
 COPY requirements.txt .
-RUN grep -vE "^torch(vision|audio)?" requirements.txt | uv pip install -r /dev/stdin
+# `torchsde`처럼 `torch`로 시작하지만 다른 패키지는 제외하지 않도록
+RUN grep -vE '^(torch($|[<>=!~])|torchvision($|[<>=!~])|torchaudio($|[<>=!~]))' requirements.txt | uv pip install -r /dev/stdin
 
 # 소스 코드 복사
 COPY . .

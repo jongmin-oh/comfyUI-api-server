@@ -11,6 +11,7 @@ docker build -t $PROJECT_NAME .
 docker run -d \
   --name $PROJECT_NAME \
   --runtime=nvidia \
+  --restart=always \
   -p 7860:7860 \
   -v $(pwd)/models:/app/models \
   $PROJECT_NAME

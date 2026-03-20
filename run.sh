@@ -1,1 +1,1 @@
-python3 main.py --gpu-only
+ python3 main.py --gpu-only --cache-lru 50

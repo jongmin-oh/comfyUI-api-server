@@ -297,7 +297,8 @@ class LoadAudio(IO.ComfyNode):
     @classmethod
     def define_schema(cls):
         input_dir = folder_paths.get_input_directory()
-        files = folder_paths.filter_files_content_types(os.listdir(input_dir), ["audio", "video"])
+        raw = os.listdir(input_dir) if os.path.exists(input_dir) else []
+        files = folder_paths.filter_files_content_types(raw, ["audio", "video"])
         return IO.Schema(
             node_id="LoadAudio",
             search_aliases=["import audio", "open audio", "audio file"],

@@ -16,9 +16,6 @@ class Load3D(IO.ComfyNode):
     @classmethod
     def define_schema(cls):
         input_dir = os.path.join(folder_paths.get_input_directory(), "3d")
-
-        os.makedirs(input_dir, exist_ok=True)
-
         input_path = Path(input_dir)
         base_path = Path(folder_paths.get_input_directory())
 

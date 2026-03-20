@@ -248,7 +248,6 @@ if __name__ == "__main__":
 
     threading.Thread(target=prompt_worker, daemon=True, args=(prompt_server.prompt_queue, prompt_server)).start()
 
-    os.makedirs(folder_paths.get_temp_directory(), exist_ok=True)
 
     from sdapi.executor import set_server as sdapi_set_server
     sdapi_set_server(prompt_server)

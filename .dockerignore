@@ -1,0 +1,19 @@
+# 가상환경
+.venv/
+
+# 모델 파일 — docker-compose volume으로 마운트
+models/
+
+# 임시 파일
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+
+# Git
+.git/
+.gitignore
+
+# 문서/설정
+*.md
+.env

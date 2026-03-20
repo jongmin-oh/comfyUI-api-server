@@ -168,7 +168,7 @@ class LoadVideo(io.ComfyNode):
     @classmethod
     def define_schema(cls):
         input_dir = folder_paths.get_input_directory()
-        files = [f for f in os.listdir(input_dir) if os.path.isfile(os.path.join(input_dir, f))]
+        files = [f for f in os.listdir(input_dir) if os.path.isfile(os.path.join(input_dir, f))] if os.path.exists(input_dir) else []
         files = folder_paths.filter_files_content_types(files, ["video"])
         return io.Schema(
             node_id="LoadVideo",

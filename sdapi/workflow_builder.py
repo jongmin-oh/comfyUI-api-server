@@ -169,20 +169,10 @@ def build_img2img_workflow(params: dict, init_image_b64: str) -> dict:
 
     model_ref, clip_ref, vae_ref = _build_common_nodes(b, params)
 
-    width  = int(params.get("width", 512))
-    height = int(params.get("height", 512))
-
-    pos_id   = b.add("CLIPTextEncode", {"text": positive_prompt, "clip": clip_ref})
-    neg_id   = b.add("CLIPTextEncode", {"text": negative_prompt, "clip": clip_ref})
-    load_id  = b.add("MemoryLoadImage", {"image_b64": init_image_b64})
-    scale_id = b.add("ImageScale", {
-        "image":          [load_id, 0],
-        "width":          width,
-        "height":         height,
-        "upscale_method": "lanczos",
-        "crop":           "disabled",
-    })
-    enc_id   = b.add("VAEEncode", {"pixels": [scale_id, 0], "vae": vae_ref})
+    pos_id  = b.add("CLIPTextEncode", {"text": positive_prompt, "clip": clip_ref})
+    neg_id  = b.add("CLIPTextEncode", {"text": negative_prompt, "clip": clip_ref})
+    load_id = b.add("MemoryLoadImage", {"image_b64": init_image_b64})
+    enc_id  = b.add("VAEEncode", {"pixels": [load_id, 0], "vae": vae_ref})
 
     ks_id = b.add("KSampler", {
         "model":        model_ref,

@@ -1721,6 +1721,36 @@ class MemoryImage:
             results.append(base64.b64encode(buf.getvalue()).decode("utf-8"))
         return {"ui": {"images_b64": results}}
 
+class MemoryLoadImage:
+    """base64 문자열을 직접 받아 이미지 텐서로 변환한다. 디스크 저장 불필요."""
+
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required": {"image_b64": ("STRING",)}}
+
+    CATEGORY = "image"
+    RETURN_TYPES = ("IMAGE", "MASK")
+    FUNCTION = "load_image"
+
+    def load_image(self, image_b64):
+        import base64
+        import io
+        raw = base64.b64decode(image_b64)
+        img = Image.open(io.BytesIO(raw))
+        img = ImageOps.exif_transpose(img)
+        if img.mode == "I":
+            img = img.point(lambda i: i * (1 / 255))
+        image = img.convert("RGB")
+        image = np.array(image).astype(np.float32) / 255.0
+        image = torch.from_numpy(image)[None,]
+        if "A" in img.getbands():
+            mask = np.array(img.getchannel("A")).astype(np.float32) / 255.0
+            mask = 1.0 - torch.from_numpy(mask)
+        else:
+            mask = torch.zeros((64, 64), dtype=torch.float32)
+        return (image, mask.unsqueeze(0))
+
+
 class LoadImage:
     @classmethod
     def INPUT_TYPES(s):
@@ -2077,6 +2107,7 @@ NODE_CLASS_MAPPINGS = {
     "SaveImage": SaveImage,
     "PreviewImage": PreviewImage,
     "MemoryImage": MemoryImage,
+    "MemoryLoadImage": MemoryLoadImage,
     "LoadImage": LoadImage,
     "LoadImageMask": LoadImageMask,
     "LoadImageOutput": LoadImageOutput,

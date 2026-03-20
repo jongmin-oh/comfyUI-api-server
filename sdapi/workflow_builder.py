@@ -152,7 +152,7 @@ def build_txt2img_workflow(params: dict) -> dict:
     return b.build()
 
 
-def build_img2img_workflow(params: dict, init_image_filename: str) -> dict:
+def build_img2img_workflow(params: dict, init_image_b64: str) -> dict:
     b = _WorkflowBuilder()
 
     positive_prompt = params.get("prompt", "")
@@ -171,7 +171,7 @@ def build_img2img_workflow(params: dict, init_image_filename: str) -> dict:
 
     pos_id  = b.add("CLIPTextEncode", {"text": positive_prompt, "clip": clip_ref})
     neg_id  = b.add("CLIPTextEncode", {"text": negative_prompt, "clip": clip_ref})
-    load_id = b.add("LoadImage",  {"image": init_image_filename, "upload": "image"})
+    load_id = b.add("MemoryLoadImage", {"image_b64": init_image_b64})
     enc_id  = b.add("VAEEncode",  {"pixels": [load_id, 0], "vae": vae_ref})
 
     ks_id = b.add("KSampler", {

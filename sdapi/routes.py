@@ -1,9 +1,6 @@
 import asyncio
-import base64
 import logging
-import os
 import traceback
-import uuid
 
 import folder_paths
 from fastapi import APIRouter
@@ -58,17 +55,7 @@ async def img2img(body: Img2ImgRequest) -> JSONResponse:
     params = body.model_dump()
 
     try:
-        raw = base64.b64decode(body.init_images[0])
-        filename = f"sdapi_init_{uuid.uuid4().hex}.png"
-        save_path = os.path.join(folder_paths.get_input_directory(), filename)
-        with open(save_path, "wb") as f:
-            f.write(raw)
-    except Exception:
-        logging.error("[sdapi] Failed to save init image:\n%s", traceback.format_exc())
-        return JSONResponse({"error": "Failed to decode/save init_images[0]"}, status_code=400)
-
-    try:
-        workflow = build_img2img_workflow(params, filename)
+        workflow = build_img2img_workflow(params, body.init_images[0])
     except ValueError as e:
         return JSONResponse({"error": str(e)}, status_code=400)
     except Exception:
@@ -84,11 +71,6 @@ async def img2img(body: Img2ImgRequest) -> JSONResponse:
     except Exception:
         logging.error("[sdapi] Execution error:\n%s", traceback.format_exc())
         return JSONResponse({"error": "Internal error during generation"}, status_code=500)
-    finally:
-        try:
-            os.remove(save_path)
-        except OSError:
-            pass
 
     status = history_entry.get("status") or {}
     if status and not status.get("completed", True):

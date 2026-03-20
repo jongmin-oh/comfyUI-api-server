@@ -1697,6 +1697,30 @@ class PreviewImage(SaveImage):
                 "hidden": {"prompt": "PROMPT", "extra_pnginfo": "EXTRA_PNGINFO"},
                 }
 
+class MemoryImage:
+    """디스크를 거치지 않고 이미지 텐서를 바로 base64로 변환해 히스토리에 저장한다."""
+
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required": {"images": ("IMAGE",)}}
+
+    RETURN_TYPES = ()
+    FUNCTION = "encode_images"
+    OUTPUT_NODE = True
+    CATEGORY = "image"
+
+    def encode_images(self, images):
+        import io
+        import base64
+        results = []
+        for image in images:
+            i = 255. * image.cpu().numpy()
+            img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
+            buf = io.BytesIO()
+            img.save(buf, format="PNG", compress_level=1)
+            results.append(base64.b64encode(buf.getvalue()).decode("utf-8"))
+        return {"ui": {"images_b64": results}}
+
 class LoadImage:
     @classmethod
     def INPUT_TYPES(s):
@@ -2052,6 +2076,7 @@ NODE_CLASS_MAPPINGS = {
     "RepeatLatentBatch": RepeatLatentBatch,
     "SaveImage": SaveImage,
     "PreviewImage": PreviewImage,
+    "MemoryImage": MemoryImage,
     "LoadImage": LoadImage,
     "LoadImageMask": LoadImageMask,
     "LoadImageOutput": LoadImageOutput,

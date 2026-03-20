@@ -147,7 +147,7 @@ def build_txt2img_workflow(params: dict) -> dict:
     })
 
     dec_id  = b.add("VAEDecode",  {"samples": [ks_id, 0], "vae": vae_ref})
-    b.add("SaveImage", {"images": [dec_id, 0], "filename_prefix": "sdapi_txt2img_"})
+    b.add("MemoryImage", {"images": [dec_id, 0]})
 
     return b.build()
 
@@ -188,6 +188,6 @@ def build_img2img_workflow(params: dict, init_image_filename: str) -> dict:
     })
 
     dec_id = b.add("VAEDecode",  {"samples": [ks_id, 0], "vae": vae_ref})
-    b.add("SaveImage", {"images": [dec_id, 0], "filename_prefix": "sdapi_img2img_"})
+    b.add("MemoryImage", {"images": [dec_id, 0]})
 
     return b.build()

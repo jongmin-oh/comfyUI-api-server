@@ -12,7 +12,7 @@ ComfyUI's speed and optimization. SD WebUI's familiar REST interface. Zero compr
 [![Docker](https://img.shields.io/badge/Docker-CUDA%2012.4-2496ED?logo=docker&logoColor=white)](https://docker.com)
 [![License](https://img.shields.io/badge/License-GPL--3.0-green)](LICENSE)
 
-[Quick Start](#-quick-start) · [API Reference](#-api-reference) · [Docker Setup](#-docker-setup) · [Examples](#-examples)
+[Quick Start](#quick-start) · [API Reference](#api-reference) · [Docker Setup](#docker-setup) · [Examples](#examples)
 
 </div>
 

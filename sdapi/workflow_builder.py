@@ -111,7 +111,7 @@ def _build_common_nodes(b: _WorkflowBuilder, params: dict) -> tuple[str, str, st
     return model_ref, clip_ref, vae_ref
 
 
-def build_txt2img_workflow(params: dict) -> dict:
+def build_txt2img_workflow(params: dict) -> tuple[dict, int]:
     b = _WorkflowBuilder()
 
     positive_prompt = params.get("prompt", "")
@@ -149,10 +149,10 @@ def build_txt2img_workflow(params: dict) -> dict:
     dec_id  = b.add("VAEDecode",  {"samples": [ks_id, 0], "vae": vae_ref})
     b.add("MemoryImage", {"images": [dec_id, 0]})
 
-    return b.build()
+    return b.build(), seed
 
 
-def build_img2img_workflow(params: dict, init_image_b64: str) -> dict:
+def build_img2img_workflow(params: dict, init_image_b64: str) -> tuple[dict, int]:
     b = _WorkflowBuilder()
 
     positive_prompt = params.get("prompt", "")
@@ -190,4 +190,4 @@ def build_img2img_workflow(params: dict, init_image_b64: str) -> dict:
     dec_id = b.add("VAEDecode",  {"samples": [ks_id, 0], "vae": vae_ref})
     b.add("MemoryImage", {"images": [dec_id, 0]})
 
-    return b.build()
+    return b.build(), seed

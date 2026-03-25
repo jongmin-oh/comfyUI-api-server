@@ -23,7 +23,7 @@ async def txt2img(body: Txt2ImgRequest) -> JSONResponse:
     params = body.model_dump()
 
     try:
-        workflow = build_txt2img_workflow(params)
+        workflow, params["seed"] = build_txt2img_workflow(params)
     except ValueError as e:
         return JSONResponse({"error": str(e)}, status_code=400)
     except Exception:
@@ -55,7 +55,7 @@ async def img2img(body: Img2ImgRequest) -> JSONResponse:
     params = body.model_dump()
 
     try:
-        workflow = build_img2img_workflow(params, body.init_images[0])
+        workflow, params["seed"] = build_img2img_workflow(params, body.init_images[0])
     except ValueError as e:
         return JSONResponse({"error": str(e)}, status_code=400)
     except Exception:

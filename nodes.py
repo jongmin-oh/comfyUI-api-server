@@ -1704,6 +1704,10 @@ class MemoryImage:
     def INPUT_TYPES(s):
         return {"required": {"images": ("IMAGE",)}}
 
+    @classmethod
+    def IS_CHANGED(s, images):
+        return float("nan")
+
     RETURN_TYPES = ()
     FUNCTION = "encode_images"
     OUTPUT_NODE = True

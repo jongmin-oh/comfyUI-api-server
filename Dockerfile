@@ -1,4 +1,4 @@
-FROM nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
+FROM nvidia/cuda:12.8.1-cudnn-runtime-ubuntu22.04
 
 ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONUNBUFFERED=1 \
@@ -20,9 +20,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# PyTorch with CUDA 12.4 — 별도 레이어로 분리해 캐싱 효율 극대화
-RUN uv pip install torch==2.6.0+cu124 torchvision==0.21.0+cu124 torchaudio==2.6.0+cu124 \
-        --index-url https://download.pytorch.org/whl/cu124
+# PyTorch with CUDA 12.8 — 별도 레이어로 분리해 캐싱 효율 극대화
+RUN uv pip install torch==2.8.0+cu128 torchvision==0.23.0+cu128 torchaudio==2.8.0+cu128 \
+        --index-url https://download.pytorch.org/whl/cu128
 
 # 나머지 의존성 설치 (torch 계열은 위에서 이미 설치)
 COPY requirements.txt .
@@ -34,4 +34,4 @@ COPY . .
 
 EXPOSE 7860
 
-CMD ["python3", "main.py", "--gpu-only", "--cache-lru", "50"]
+CMD ["python3", "main.py"]

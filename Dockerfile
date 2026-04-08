@@ -34,4 +34,4 @@ COPY . .
 
 EXPOSE 7860
 
-CMD ["python3", "main.py"]
+CMD ["python3", "main.py", "--gpu-only", "--cache-lru", "50"]

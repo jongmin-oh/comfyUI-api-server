@@ -609,8 +609,9 @@ async def execute(server, dynprompt, caches, current_item, extra_data, executed,
             for name, inputs in input_data_all.items():
                 input_data_formatted[name] = [format_value(x) for x in inputs]
 
-        logging.error(f"!!! Exception during processing !!! {ex}")
-        logging.error(traceback.format_exc())
+        logging.error("!!! Exception during processing !!! %s (%s)", ex, type(ex).__name__)
+        if logging.getLogger().isEnabledFor(logging.DEBUG):
+            logging.error(traceback.format_exc())
         tips = ""
 
         if comfy.model_management.is_oom(ex):

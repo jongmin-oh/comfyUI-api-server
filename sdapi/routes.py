@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import traceback
 
 import folder_paths
 from fastapi import APIRouter
@@ -17,6 +16,12 @@ from sdapi.workflow_builder import (
 
 router = APIRouter()
 
+def _log_sdapi_exception(prefix: str, ex: Exception) -> None:
+    if logging.getLogger().isEnabledFor(logging.DEBUG):
+        logging.exception("[sdapi] %s: %s", prefix, ex)
+    else:
+        logging.error("[sdapi] %s: %s (%s)", prefix, ex, type(ex).__name__)
+
 
 @router.post("/txt2img")
 async def txt2img(body: Txt2ImgRequest) -> JSONResponse:
@@ -26,8 +31,8 @@ async def txt2img(body: Txt2ImgRequest) -> JSONResponse:
         workflow, params["seed"] = build_txt2img_workflow(params)
     except ValueError as e:
         return JSONResponse({"error": str(e)}, status_code=400)
-    except Exception:
-        logging.error("[sdapi] Workflow build error:\n%s", traceback.format_exc())
+    except Exception as ex:
+        _log_sdapi_exception("Workflow build error", ex)
         return JSONResponse({"error": "Internal error building workflow"}, status_code=500)
 
     try:
@@ -36,8 +41,8 @@ async def txt2img(body: Txt2ImgRequest) -> JSONResponse:
         return JSONResponse({"error": "Generation timed out"}, status_code=504)
     except RuntimeError as e:
         return JSONResponse({"error": str(e)}, status_code=400)
-    except Exception:
-        logging.error("[sdapi] Execution error:\n%s", traceback.format_exc())
+    except Exception as ex:
+        _log_sdapi_exception("Execution error", ex)
         return JSONResponse({"error": "Internal error during generation"}, status_code=500)
 
     status = history_entry.get("status") or {}
@@ -58,8 +63,8 @@ async def img2img(body: Img2ImgRequest) -> JSONResponse:
         workflow, params["seed"] = build_img2img_workflow(params, body.init_images[0])
     except ValueError as e:
         return JSONResponse({"error": str(e)}, status_code=400)
-    except Exception:
-        logging.error("[sdapi] Workflow build error:\n%s", traceback.format_exc())
+    except Exception as ex:
+        _log_sdapi_exception("Workflow build error", ex)
         return JSONResponse({"error": "Internal error building workflow"}, status_code=500)
 
     try:
@@ -68,8 +73,8 @@ async def img2img(body: Img2ImgRequest) -> JSONResponse:
         return JSONResponse({"error": "Generation timed out"}, status_code=504)
     except RuntimeError as e:
         return JSONResponse({"error": str(e)}, status_code=400)
-    except Exception:
-        logging.error("[sdapi] Execution error:\n%s", traceback.format_exc())
+    except Exception as ex:
+        _log_sdapi_exception("Execution error", ex)
         return JSONResponse({"error": "Internal error during generation"}, status_code=500)
 
     status = history_entry.get("status") or {}

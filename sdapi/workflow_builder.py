@@ -54,7 +54,7 @@ def _resolve_model(model_name: str | None) -> str:
 
 
 def _random_seed():
-    return random.randint(0, 0xFFFFFFFFFFFFFFFF)
+    return random.randint(100000, 999999)
 
 
 class _WorkflowBuilder:

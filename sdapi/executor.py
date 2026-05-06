@@ -27,7 +27,9 @@ async def submit_and_wait(workflow: dict) -> dict:
 
     valid = await execution.validate_prompt(prompt_id, workflow, None)
     if not valid[0]:
-        raise RuntimeError(f"Workflow validation failed: {valid[1]}")
+        error = valid[1]
+        error_msg = error.get("message", str(error)) if isinstance(error, dict) else str(error)
+        raise RuntimeError(f"Workflow validation failed: {error_msg}")
 
     outputs_to_execute = valid[2]
 

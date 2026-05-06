@@ -16,11 +16,27 @@ from sdapi.workflow_builder import (
 
 router = APIRouter()
 
+
 def _log_sdapi_exception(prefix: str, ex: Exception) -> None:
     if logging.getLogger().isEnabledFor(logging.DEBUG):
         logging.exception("[sdapi] %s: %s", prefix, ex)
     else:
         logging.error("[sdapi] %s: %s (%s)", prefix, ex, type(ex).__name__)
+
+
+def _extract_error_details(status: dict) -> list:
+    result = []
+    for msg in (status.get("messages") or []):
+        if not (isinstance(msg, (list, tuple)) and len(msg) == 2):
+            continue
+        event, data = msg
+        if event == "execution_error" and isinstance(data, dict):
+            result.append({
+                "node_id": data.get("node_id"),
+                "node_type": data.get("node_type"),
+                "message": data.get("exception_message"),
+            })
+    return result
 
 
 @router.post("/txt2img")
@@ -48,7 +64,7 @@ async def txt2img(body: Txt2ImgRequest) -> JSONResponse:
     status = history_entry.get("status") or {}
     if status and not status.get("completed", True):
         return JSONResponse(
-            {"error": "Generation failed", "details": status.get("messages", [])},
+            {"error": "Generation failed", "details": _extract_error_details(status)},
             status_code=500,
         )
 
@@ -80,7 +96,7 @@ async def img2img(body: Img2ImgRequest) -> JSONResponse:
     status = history_entry.get("status") or {}
     if status and not status.get("completed", True):
         return JSONResponse(
-            {"error": "Generation failed", "details": status.get("messages", [])},
+            {"error": "Generation failed", "details": _extract_error_details(status)},
             status_code=500,
         )
 

@@ -3,7 +3,6 @@ Minimal PromptServer stub — replaces the aiohttp-based server.
 Provides just enough interface for PromptExecutor and PromptQueue.
 """
 import asyncio
-import logging
 
 import execution
 from app.node_replace_manager import NodeReplaceManager
@@ -28,7 +27,7 @@ class PromptServer:
         self.prompt_queue.add_task_done_callback(self._sdapi_task_done_callback)
 
     # ------------------------------------------------------------------ #
-    # Interface expected by PromptExecutor / PromptQueue / custom nodes   #
+    # Interface expected by PromptExecutor / PromptQueue / custom nodes  #
     # ------------------------------------------------------------------ #
 
     def send_sync(self, event, data, sid=None):
@@ -41,7 +40,7 @@ class PromptServer:
         pass
 
     # ------------------------------------------------------------------ #
-    # SDAPI completion signalling                                          #
+    # SDAPI completion signalling                                        #
     # ------------------------------------------------------------------ #
 
     def _sdapi_task_done_callback(self, prompt_id: str):
